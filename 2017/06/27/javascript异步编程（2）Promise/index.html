@@ -1,0 +1,856 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Javascript,异步编程," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="定义&amp;amp;概念Promise 对象表示一个异步操作的最终完成（或失败）情况">
+<meta name="keywords" content="Javascript,异步编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="javascript异步编程（2）Promise">
+<meta property="og:url" content="http://yoursite.com/2017/06/27/javascript异步编程（2）Promise/index.html">
+<meta property="og:site_name" content="popzhou的博客">
+<meta property="og:description" content="定义&amp;amp;概念Promise 对象表示一个异步操作的最终完成（或失败）情况">
+<meta property="og:image" content="http://yoursite.com/images/javascript/js-promises.png">
+<meta property="og:updated_time" content="2017-07-17T14:13:04.573Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="javascript异步编程（2）Promise">
+<meta name="twitter:description" content="定义&amp;amp;概念Promise 对象表示一个异步操作的最终完成（或失败）情况">
+<meta name="twitter:image" content="http://yoursite.com/images/javascript/js-promises.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/27/javascript异步编程（2）Promise/"/>
+
+
+
+
+
+  <title>javascript异步编程（2）Promise | popzhou的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c429fff5139c66ad17a4e5c50f3b2c41";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">popzhou的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/27/javascript异步编程（2）Promise/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="popzhou">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="popzhou的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                javascript异步编程（2）Promise
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-27T22:53:38+08:00">
+                2017-06-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">Javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/06/27/javascript异步编程（2）Promise/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/06/27/javascript异步编程（2）Promise/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="定义-amp-概念"><a href="#定义-amp-概念" class="headerlink" title="定义&amp;概念"></a>定义&amp;概念</h1><p>Promise 对象表示一个异步操作的最终完成（或失败）情况</p>
+<a id="more"></a>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> promise = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  <span class="comment">// do a thing, possibly async, then…</span></div><div class="line"></div><div class="line">  <span class="keyword">if</span> (<span class="comment">/* everything turned out fine */</span>) &#123;</div><div class="line">    resolve(<span class="string">"Stuff worked!"</span>);</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">else</span> &#123;</div><div class="line">    reject(<span class="built_in">Error</span>(<span class="string">"It broke"</span>));</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>resolve 和 reject 函数被调用时，分别将promise的状态改为fulfilled(完成)或rejected（失败）。</p>
+<p>一个 Promise有以下几种状态:</p>
+<ul>
+<li>pending: 初始状态，不是成功或失败状态。</li>
+<li>fulfilled: 意味着操作成功完成。</li>
+<li>rejected: 意味着操作失败。</li>
+</ul>
+<blockquote>
+<p>Promise 对象是一个代理对象（代理一个值），被代理的值在Promise对象创建时可能是未知的。它允许你为异步操作的成功和失败分别绑定相应的处理方法（handlers ）。 这让异步方法可以像同步方法那样返回值，但并不是立即返回最终执行结果，而是一个能代表未来出现的结果的promise对象</p>
+</blockquote>
+<h1 id="Promise-prototype-then"><a href="#Promise-prototype-then" class="headerlink" title="Promise.prototype.then"></a>Promise.prototype.then</h1><p><code>then()</code> 方法返回一个  Promise。它最多需要有两个参数：<code>onfulfilled</code> 和 <code>onrejected</code>，它们都是 Function 类型。  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">p.then(onFulfilled, onRejected);</div><div class="line"></div><div class="line">p.then(<span class="function"><span class="keyword">function</span>(<span class="params">value</span>) </span>&#123;</div><div class="line">   <span class="comment">// fulfillment</span></div><div class="line">  &#125;, <span class="function"><span class="keyword">function</span>(<span class="params">reason</span>) </span>&#123;</div><div class="line">  <span class="comment">// rejection</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>当Promise状态为fulfilled时，调用 then 的 onfulfilled 方法，当Promise状态为rejected时，调用 then 的 onrejected 方法， 所以在异步操作的完成和绑定处理方法之间不存在竞争</p>
+<p>因为 <code>Promise.prototype.then</code> 和 <code>Promise.prototype.catch</code> 方法返回promise 对象， 所以它们可以被链式调用。<br><img src="/images/javascript/js-promises.png" alt="promises"></p>
+<h1 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h1><ul>
+<li>只需返回新值即可改变值</li>
+<li>如果前面返回的是Promise对象，后面的then将会被当做这个返回的Promise的第一个then来对待</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> promise = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span>(<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">  resolve(<span class="number">1</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">var</span> promise2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</div><div class="line">    resolve(<span class="number">100</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">promise.then(<span class="function"><span class="keyword">function</span> (<span class="params">val</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(val); <span class="comment">// 1</span></div><div class="line">    <span class="keyword">return</span> val + <span class="number">2</span>;   <span class="comment">//返回新值</span></div><div class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params">val</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(val); <span class="comment">// 3</span></div><div class="line">    <span class="keyword">return</span> promise2;  <span class="comment">//返回promise2</span></div><div class="line">&#125;).then(<span class="function"><span class="keyword">function</span> (<span class="params">val</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(val); <span class="comment">//100</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h1 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h1><p>catch() 没有任何特殊之处。它的行为与调用 <code>Promise.prototype.then(undefined, onRejected)</code> 相同，但可读性更强。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">get(<span class="string">'story.json'</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">"Success!"</span>, response);</div><div class="line">&#125;).catch(<span class="function"><span class="keyword">function</span>(<span class="params">error</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">"Failed!"</span>, error);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>上面代码，相当于下面代码<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">get(<span class="string">'story.json'</span>).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">"Success!"</span>, response);</div><div class="line">&#125;).then(<span class="literal">undefined</span>, <span class="function"><span class="keyword">function</span>(<span class="params">error</span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">"Failed!"</span>, error);</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>两者之间的<strong>差异虽然很微小</strong>，但非常有用。<br>Promise 拒绝后，将跳至带有拒绝回调的下一个<code>then()</code>（或具有相同功能的 <code>catch()</code>）。如果是 <code>then(func1, func2)</code>，则 <code>func1</code> 或 <code>func2</code> 中的一个将被调用，而<strong>不会二者均被调用</strong>。但如果是<code>then(func1).catch(func2)</code>，则在 <code>func1</code> 拒绝时两者均被调用，因为它们在该链中是单独的步骤。</p>
+<p>如下代码，当Promise 拒绝后，<code>handleNetworkError</code>和 <code>handleProgrammerError</code>都会被调用。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">save()</div><div class="line">  .then(</div><div class="line">    handleSuccess,</div><div class="line">    handleNetworkError</div><div class="line">  )</div><div class="line">  .catch(handleProgrammerError)</div><div class="line">;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><strong>注意</strong>：与 JavaScript 的 try/catch 一样，错误被捕获而后续代码继续执行。</p>
+<p><strong>建议</strong>： ending all promise chains with a <code>.catch()</code>.</p>
+</blockquote>
+<h1 id="Promise-API参考"><a href="#Promise-API参考" class="headerlink" title="Promise API参考"></a>Promise API参考</h1><p><strong>静态方法</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Promise.resolve(promise);</code></td>
+<td>返回 promise（仅当 promise.constructor == Promise 时）</td>
+</tr>
+<tr>
+<td><code>Promise.resolve(thenable);</code></td>
+<td>从 thenable 中生成一个新 promise。thenable 是具有 <code>then()</code> 方法的类似于 promise 的对象。</td>
+</tr>
+<tr>
+<td><code>Promise.resolve(obj);</code></td>
+<td>在此情况下，生成一个 promise 并在执行时返回 obj。</td>
+</tr>
+<tr>
+<td><code>Promise.reject(obj);</code></td>
+<td>生成一个 promise 并在拒绝时返回 obj。为保持一致和调试之目的（例如堆叠追踪）， obj 应为 instanceof Error。</td>
+</tr>
+<tr>
+<td><code>Promise.all(array);</code></td>
+<td>生成一个 promise，该 promise 在数组中各项执行时执行，在任意一项拒绝时拒绝。每个数组项均传递给 Promise.resolve，因此数组可能混合了类似于 promise 的对象和其他对象。执行值是一组有序的执行值。拒绝值是第一个拒绝值。</td>
+</tr>
+<tr>
+<td><code>Promise.race(array);</code></td>
+<td>生成一个 Promise，该 Promise 在任意项执行时执行，或在任意项拒绝时拒绝，以最先发生的为准。</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Q-js-库"><a href="#Q-js-库" class="headerlink" title="Q.js 库"></a>Q.js 库</h1><h2 id="安装Q-js"><a href="#安装Q-js" class="headerlink" title="安装Q.js"></a>安装Q.js</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm i q --save</div></pre></td></tr></table></figure>
+<h2 id="使用Q-nfcall和Q-nfapply"><a href="#使用Q-nfcall和Q-nfapply" class="headerlink" title="使用Q.nfcall和Q.nfapply"></a>使用Q.nfcall和Q.nfapply</h2><p><code>Q.nfcall</code> 就是使用 <strong>call的语法</strong> 来返回一个promise对象，例如</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> fullFileName = path.resolve(__dirname, <span class="string">'../data/data1.json'</span>)</div><div class="line"><span class="keyword">const</span> result = Q.nfcall(fs.readFile, fullFileName, <span class="string">'utf-8'</span>)  <span class="comment">// 使用 Q.nfcall 返回一个 promise</span></div><div class="line">result.then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</div><div class="line">    <span class="built_in">console</span>.log(data)</div><div class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</div><div class="line">    <span class="built_in">console</span>.log(err.stack)</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p><code>Q.nfapply</code> 就是使用 <strong>apply的语法</strong> 返回一个promise对象，例如<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> fullFileName = path.resolve(__dirname, <span class="string">'../data/data1.json'</span>)</div><div class="line"><span class="keyword">const</span> result = Q.nfapply(fs.readFile, [fullFileName, <span class="string">'utf-8'</span>])  <span class="comment">// 使用 Q.nfapply 返回一个 promise</span></div><div class="line">result.then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</div><div class="line">    <span class="built_in">console</span>.log(data)</div><div class="line">&#125;).catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</div><div class="line">    <span class="built_in">console</span>.log(err.stack)</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise" target="_blank" rel="external">MDN Promise</a></li>
+<li><a href="https://developers.google.com/web/fundamentals/getting-started/primers/promises" target="_blank" rel="external">developers.google.com: JavaScript Promise 简介</a></li>
+<li><a href="https://medium.com/javascript-scene/master-the-javascript-interview-what-is-a-promise-27fc71e77261" target="_blank" rel="external">medium: What is a Promise?</a></li>
+<li><a href="https://github.com/kriskowal/q" target="_blank" rel="external">Q.js 库</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+          
+            <a href="/tags/异步编程/" rel="tag"># 异步编程</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/27/javascript异步编程（1）什么是异步/" rel="next" title="Javascript异步编程（1）什么是异步">
+                <i class="fa fa-chevron-left"></i> Javascript异步编程（1）什么是异步
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/27/javascript异步编程（3）Generator/" rel="prev" title="javascript异步编程（3）Generator">
+                javascript异步编程（3）Generator <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="popzhou" />
+          <p class="site-author-name" itemprop="name">popzhou</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/popzhou" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.ruanyifeng.com/" title="阮一峰" target="_blank">阮一峰</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定义-amp-概念"><span class="nav-number">1.</span> <span class="nav-text">定义&概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Promise-prototype-then"><span class="nav-number">2.</span> <span class="nav-text">Promise.prototype.then</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参数传递"><span class="nav-number">3.</span> <span class="nav-text">参数传递</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#异常处理"><span class="nav-number">4.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Promise-API参考"><span class="nav-number">5.</span> <span class="nav-text">Promise API参考</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Q-js-库"><span class="nav-number">6.</span> <span class="nav-text">Q.js 库</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Q-js"><span class="nav-number">6.1.</span> <span class="nav-text">安装Q.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Q-nfcall和Q-nfapply"><span class="nav-number">6.2.</span> <span class="nav-text">使用Q.nfcall和Q.nfapply</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">7.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">popzhou</span>
+  &nbsp;&nbsp;&nbsp;
+  <span><a href="https://tongji.baidu.com" target="_blank">百度统计</a></span>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://https-popzhou-github-io.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2017/06/27/javascript异步编程（2）Promise/';
+          this.page.identifier = '2017/06/27/javascript异步编程（2）Promise/';
+          this.page.title = 'javascript异步编程（2）Promise';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://https-popzhou-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

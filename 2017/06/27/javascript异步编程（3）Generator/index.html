@@ -1,0 +1,891 @@
+<!doctype html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Javascript,异步编程," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="基础概念Symbol 类型Symbol 是一种特殊的、不可变的数据类型，可以作为对象属性的标识符使用。">
+<meta name="keywords" content="Javascript,异步编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="javascript异步编程（3）Generator">
+<meta property="og:url" content="http://yoursite.com/2017/06/27/javascript异步编程（3）Generator/index.html">
+<meta property="og:site_name" content="popzhou的博客">
+<meta property="og:description" content="基础概念Symbol 类型Symbol 是一种特殊的、不可变的数据类型，可以作为对象属性的标识符使用。">
+<meta property="og:updated_time" content="2017-07-17T14:13:04.606Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="javascript异步编程（3）Generator">
+<meta name="twitter:description" content="基础概念Symbol 类型Symbol 是一种特殊的、不可变的数据类型，可以作为对象属性的标识符使用。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: false,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/06/27/javascript异步编程（3）Generator/"/>
+
+
+
+
+
+  <title>javascript异步编程（3）Generator | popzhou的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c429fff5139c66ad17a4e5c50f3b2c41";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">popzhou的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/06/27/javascript异步编程（3）Generator/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="popzhou">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="popzhou的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                javascript异步编程（3）Generator
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-27T22:53:56+08:00">
+                2017-06-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">Javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/06/27/javascript异步编程（3）Generator/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/06/27/javascript异步编程（3）Generator/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h1><h2 id="Symbol-类型"><a href="#Symbol-类型" class="headerlink" title="Symbol 类型"></a>Symbol 类型</h2><p>Symbol 是一种特殊的、不可变的数据类型，可以作为对象属性的标识符使用。  </p>
+<a id="more"></a>
+<p>ES5 的对象属性名都是字符串，这容易造成属性名的冲突。比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突。这就是 ES6 引入Symbol的原因。</p>
+<p>它是 JavaScript 语言的第七种数据类型，前六种是：undefined、null、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。</p>
+<h2 id="Symbol-iterator"><a href="#Symbol-iterator" class="headerlink" title="Symbol.iterator"></a>Symbol.iterator</h2><p><code>Symbol.iterator</code> 为每一个对象定义了默认的迭代器。该迭代器可以被 <code>for...of</code> 循环结构使用。  </p>
+<p>当需要迭代一个对象的时候（比如在 <code>for...of</code> 循环的开始时），它的 <code>@@iterator</code> 方法就会被调用一次（0 个参数），同时返回的迭代器将被用来获取被迭代出来的值。</p>
+<p>javascript中拥有默认的迭代器行为的<strong>内建类型</strong>有：</p>
+<ul>
+<li>Array.prototype[@@iterator]()</li>
+<li>TypedArray.prototype[@@iterator]()</li>
+<li>String.prototype[@@iterator]()</li>
+<li>Map.prototype[@@iterator]()</li>
+<li>Set.prototype[@@iterator]()</li>
+</ul>
+<h2 id="可迭代协议-iterable"><a href="#可迭代协议-iterable" class="headerlink" title="可迭代协议 iterable"></a>可迭代协议 iterable</h2><p>可迭代协议允许 JavaScript 对象去定义或定制它们的迭代行为, 例如（定义）在一个 for..of 结构中什么值可以被循环（得到）。  </p>
+<p>为了变成可遍历对象， 一个对象必须实现 <code>@@iterator</code> 方法, 意思是这个对象（或者它原型链prototype chain上的某个对象）必须有一个名字是 <code>Symbol.iterator</code> 的属性:</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>值 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[Symbol.iterator]</td>
+<td>返回一个对象的无参函数，被返回对象符合迭代器协议。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="可迭代对象示例"><a href="#可迭代对象示例" class="headerlink" title="可迭代对象示例"></a>可迭代对象示例</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> myIterable = &#123;&#125;</div><div class="line">myIterable[<span class="built_in">Symbol</span>.iterator] = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</div><div class="line">    <span class="keyword">yield</span> <span class="number">2</span>;</div><div class="line">    <span class="keyword">yield</span> <span class="number">3</span>;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">for</span>( <span class="keyword">let</span> val <span class="keyword">of</span> myIterable)&#123;</div><div class="line">    <span class="built_in">console</span>.log(val); <span class="comment">// 1,2,3</span></div><div class="line">&#125;;</div><div class="line">[...myIterable] <span class="comment">// [1, 2, 3],也可以使用 spread operator扩展语句</span></div></pre></td></tr></table></figure>
+<h3 id="用于可迭代对象的语法"><a href="#用于可迭代对象的语法" class="headerlink" title="用于可迭代对象的语法"></a>用于可迭代对象的语法</h3><p>一些语句和表达式是预料会用于可迭代对象，比如 <code>for-of</code> 循环，<code>spread operator(扩展语句)</code>, <code>yield*</code> 和 <code>destructuring assignment(解构赋值)</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span>(<span class="keyword">let</span> value <span class="keyword">of</span> [<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>])&#123;</div><div class="line">    <span class="built_in">console</span>.log(value);</div><div class="line">&#125;</div><div class="line"><span class="comment">// "a"</span></div><div class="line"><span class="comment">// "b"</span></div><div class="line"><span class="comment">// "c"</span></div><div class="line"></div><div class="line">[...<span class="string">"abc"</span>]; <span class="comment">// ["a", "b", "c"]</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">gen</span>(<span class="params"></span>)</span>&#123;</div><div class="line">  <span class="keyword">yield</span>* [<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>];</div><div class="line">&#125;</div><div class="line"></div><div class="line">gen().next(); <span class="comment">// &#123; value:"a", done:false &#125;</span></div><div class="line"></div><div class="line">[a, b, c] = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>]);</div><div class="line">a <span class="comment">// "a"</span></div></pre></td></tr></table></figure>
+<h2 id="迭代器协议-iterator"><a href="#迭代器协议-iterator" class="headerlink" title="迭代器协议 iterator"></a>迭代器协议 iterator</h2><p>该迭代器协议定义了一种标准的方式来产生一个有限或无限序列的值。<br>当一个对象被认为是一个迭代器时，它实现了一个 <code>next()</code> 的方法并且拥有以下含义：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>值 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>next</td>
+<td>返回一个对象的无参函数，被返回对象拥有两个属性：<br><code>done (boolean)</code> <br> &nbsp;&nbsp;&nbsp;&nbsp;如果迭代器已经经过了被迭代序列时为 true。这时 value 可能描述了该迭代器的返回值。返回值在这里有更多解释。<br>&nbsp;&nbsp;&nbsp;&nbsp;如果迭代器可以产生序列中的下一个值，则为 false。这等效于连同 done 属性也不指定。 <br><code>value</code> <br> &nbsp;&nbsp;&nbsp;&nbsp;迭代器返回的任何 JavaScript 值。done 为 true 时可省略。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="迭代器示例"><a href="#迭代器示例" class="headerlink" title="迭代器示例"></a>迭代器示例</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeIterator</span>(<span class="params">array</span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> nextIndex = <span class="number">0</span>;</div><div class="line">    </div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">       <span class="attr">next</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">           <span class="keyword">return</span> nextIndex &lt; array.length ?</div><div class="line">               &#123;<span class="attr">value</span>: array[nextIndex++], <span class="attr">done</span>: <span class="literal">false</span>&#125; :</div><div class="line">               &#123;<span class="attr">done</span>: <span class="literal">true</span>&#125;;</div><div class="line">       &#125;</div><div class="line">    &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> it = makeIterator([<span class="string">'yo'</span>, <span class="string">'ya'</span>]);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(it.next().value); <span class="comment">// 'yo'</span></div><div class="line"><span class="built_in">console</span>.log(it.next().value); <span class="comment">// 'ya'</span></div><div class="line"><span class="built_in">console</span>.log(it.next().done);  <span class="comment">// true</span></div></pre></td></tr></table></figure>
+<h2 id="可迭代对象转换为迭代器对象"><a href="#可迭代对象转换为迭代器对象" class="headerlink" title="可迭代对象转换为迭代器对象"></a>可迭代对象转换为迭代器对象</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> someArray = [<span class="number">1</span>, <span class="number">5</span>, <span class="number">7</span>];</div><div class="line"><span class="keyword">var</span> someArrayEntries = someArray.entries();</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(someArrayEntries.toString()); ;           <span class="comment">// "[object Array Iterator]"</span></div><div class="line"><span class="built_in">console</span>.log(someArrayEntries === someArrayEntries[<span class="built_in">Symbol</span>.iterator]());    <span class="comment">// true;</span></div><div class="line"><span class="built_in">console</span>.log(someArrayEntries.next()); <span class="comment">// &#123; value: [ 0, 1 ], done: false &#125;</span></div></pre></td></tr></table></figure>
+<p>注：<code>entries()</code> 方法返回一个新的Array Iterator对象，该对象包含数组中每个索引的键/值对。</p>
+<h1 id="function-生成器函数"><a href="#function-生成器函数" class="headerlink" title="function*  生成器函数"></a>function*  生成器函数</h1><p>function*  这种声明方式(function关键字后跟一个星号）会定义一个<strong><code>生成器函数(generator function)</code></strong>，它返回一个  <code>Generator</code>  对象。  </p>
+<p><strong>生成器函数</strong>在执行时能中途退出，后面又能重新进入继续执行。而且在函数内定义的变量的状态都会保留，不受中途退出的影响。</p>
+<p><strong>调用</strong>一个<strong>生成器函数</strong>并不会马上执行它里面的语句，而是返回一个这个生成器的<strong>迭代器（iterator）对象</strong>。<br>当这个迭代器的 next() 方法被首次（后续）调用时，其内的语句会执行到第一个（后续）出现yield表达式的位置为止，该表达式定义了迭代器要返回的值，或者被 yield*委派至另一个生成器函数。next()方法返回一个对象，这个对象包含两个属性：value 和 done，value 属性表示本次 yield 表达式的返回值，done 属性为布尔类型，表示生成器是否已经产出了它最后的值，即生成器函数是否已经返回。</p>
+<h2 id="next-传参"><a href="#next-传参" class="headerlink" title="next()传参"></a>next()传参</h2><p>调用 next() 方法时，如果传入了参数，那么这个参数会取代生成器函数中对应执行位置的 yield 表达式（整个表达式被这个值替换）<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">G</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> a = <span class="keyword">yield</span> <span class="number">100</span></div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'a'</span>, a)  <span class="comment">// a aaa</span></div><div class="line">    <span class="keyword">const</span> b = <span class="keyword">yield</span> <span class="number">200</span></div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'b'</span>, b)  <span class="comment">// b bbb</span></div><div class="line">    <span class="keyword">const</span> c = <span class="keyword">yield</span> <span class="number">300</span></div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'c'</span>, c)  <span class="comment">// c ccc</span></div><div class="line">&#125;</div><div class="line"><span class="keyword">const</span> g = G()</div><div class="line"><span class="built_in">console</span>.log(g.next());      <span class="comment">// &#123; value: 100, done: false &#125;</span></div><div class="line"><span class="built_in">console</span>.log(g.next(<span class="string">'aaa'</span>)); <span class="comment">// &#123; value: 200, done: false &#125;</span></div><div class="line"><span class="built_in">console</span>.log(g.next(<span class="string">'bbb'</span>)); <span class="comment">// &#123; value: 300, done: false &#125;</span></div><div class="line"><span class="built_in">console</span>.log(g.next(<span class="string">'ccc'</span>)); <span class="comment">// &#123; value: undefined, done: true &#125;</span></div></pre></td></tr></table></figure></p>
+<h1 id="Generator-生成器"><a href="#Generator-生成器" class="headerlink" title="Generator  生成器"></a>Generator  生成器</h1><p>生成器对象是由一个 <code>generator function</code> 返回的,并且它符合<code>可迭代协议</code>和<code>迭代器协议</code>。</p>
+<blockquote>
+<p><strong>生成器对象 既是<code>迭代器</code>也是<code>可迭代对象</code></strong></p>
+</blockquote>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Generator.prototype.next()</code></td>
+<td>返回一个由 yield表达式生成的值。</td>
+</tr>
+<tr>
+<td><code>Generator.prototype.return()</code></td>
+<td>返回给定的值并结束生成器。</td>
+</tr>
+<tr>
+<td><code>Generator.prototype.throw()</code></td>
+<td>向生成器抛出一个错误。</td>
+</tr>
+</tbody>
+</table>
+<h1 id="Thunk-函数"><a href="#Thunk-函数" class="headerlink" title="Thunk 函数"></a>Thunk 函数</h1><p>要想让Generator和异步操作产生联系，就必须过 <code>thunk</code> 函数这一关。</p>
+<p>在 JavaScript 语言中，<code>Thunk</code> 函数替换的不是表达式，而是多参数函数，将其替换成单参数的版本，且只接受回调函数作为参数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 正常版本的readFile（多参数版本）</span></div><div class="line">fs.readFile(fileName, callback);</div><div class="line"></div><div class="line"><span class="comment">// Thunk版本的readFile（单参数版本）</span></div><div class="line"><span class="keyword">var</span> readFileThunk = Thunk(fileName);</div><div class="line">readFileThunk(callback);</div><div class="line"></div><div class="line"><span class="keyword">var</span> Thunk = <span class="function"><span class="keyword">function</span> (<span class="params">fileName</span>)</span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">callback</span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> fs.readFile(fileName, callback); </div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="thunkify-库"><a href="#thunkify-库" class="headerlink" title="thunkify 库"></a>thunkify 库</h2><p>Turn a regular node function into one which returns a thunk, useful for generator-based flow control such as <code>co</code>.</p>
+<p>示例<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> thunkify = <span class="built_in">require</span>(<span class="string">'thunkify'</span>);</div><div class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</div><div class="line"></div><div class="line"><span class="keyword">var</span> read = thunkify(fs.readFile);</div><div class="line"></div><div class="line">read(<span class="string">'package.json'</span>, <span class="string">'utf8'</span>)(<span class="function"><span class="keyword">function</span>(<span class="params">err, str</span>)</span>&#123;</div><div class="line">  </div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="Thunk-函数的自动流程管理"><a href="#Thunk-函数的自动流程管理" class="headerlink" title="Thunk 函数的自动流程管理"></a>Thunk 函数的自动流程管理</h2><p>使用 <code>Thunk</code> 可以实现 <code>Generator</code> 的自动化流程管理<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 自动流程管理的函数</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params">generator</span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> g = generator()</div><div class="line">    <span class="function"><span class="keyword">function</span> <span class="title">next</span>(<span class="params">err, data</span>) </span>&#123;</div><div class="line">        <span class="keyword">const</span> result = g.next(data)  <span class="comment">// 返回 &#123; value: thunk函数, done: ... &#125;</span></div><div class="line">        <span class="keyword">if</span> (result.done) &#123;</div><div class="line">            <span class="comment">// result.done 表示是否结束，如果结束了那就 return 作罢</span></div><div class="line">            <span class="keyword">return</span></div><div class="line">        &#125;</div><div class="line">        result.value(next)  <span class="comment">// result.value 是一个 thunk 函数，需要一个 callback 函数作为参数，而 next 就是一个 callback 形式的函数</span></div><div class="line">    &#125;</div><div class="line">    next() <span class="comment">// 手动执行以启动第一次 next</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 定义 Generator</span></div><div class="line"><span class="keyword">const</span> readFileThunk = thunkify(fs.readFile)</div><div class="line"><span class="keyword">const</span> gen = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> r1 = <span class="keyword">yield</span> readFileThunk(<span class="string">'data1.json'</span>)</div><div class="line">    <span class="built_in">console</span>.log(r1)</div><div class="line">    <span class="keyword">const</span> r2 = <span class="keyword">yield</span> readFileThunk(<span class="string">'data2.json'</span>)</div><div class="line">    <span class="built_in">console</span>.log(r2)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 启动执行</span></div><div class="line">run(gen)</div></pre></td></tr></table></figure></p>
+<h1 id="co-库"><a href="#co-库" class="headerlink" title="co 库"></a>co 库</h1><p>什么是co？</p>
+<blockquote>
+<p>Generator based control flow goodness for nodejs and the browser, using promises, letting you write non-blocking code in a nice-ish way.</p>
+</blockquote>
+<p>根据官方介绍得知，<code>co</code> 是基于 <code>Generator</code> 的控制流管理库，并且 <code>co()</code> 返回一个 <code>promise</code> 对象</p>
+<p>co 函数库其实就是将两种自动执行器（Thunk 函数和 Promise 对象），包装成一个库。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> readFileThunk = thunkify(fs.readFile)</div><div class="line"></div><div class="line">co(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> r1 = <span class="keyword">yield</span> readFileThunk(<span class="string">'data1.json'</span>);</div><div class="line">    <span class="built_in">console</span>.log(r1.toString())</div><div class="line">    <span class="keyword">const</span> r2 = <span class="keyword">yield</span> readFileThunk(<span class="string">'data2.json'</span>);</div><div class="line">    <span class="built_in">console</span>.log(r2.toString())</div><div class="line">&#125;).catch(onerror);</div></pre></td></tr></table></figure>
+<p>另外，<code>co</code> 支持并发的异步操作。当前，co 支持的 <code>Yieldables</code> 有：详见 <a href="https://github.com/tj/co" target="_blank" rel="external">github</a></p>
+<ul>
+<li>promises</li>
+<li>thunks (functions)</li>
+<li>array (parallel execution)</li>
+<li>objects (parallel execution)</li>
+<li>generators (delegation)</li>
+<li>generator functions (delegation)</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Generator" target="_blank" rel="external">MDN Generator</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/function*" target="_blank" rel="external">MDN function*</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols#iterable" target="_blank" rel="external">MDN 可迭代协议&amp;迭代器协议</a></li>
+<li><a href="https://github.com/wangfupeng1988/js-async-tutorial" target="_blank" rel="external">王福朋的深入理解 JavaScript 异步</a></li>
+<li><a href="http://es6.ruanyifeng.com/#docs/symbol" target="_blank" rel="external">阮一峰 ES6入门 Symbol</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol/iterator" target="_blank" rel="external">MDN Symbol.iterator</a></li>
+<li><a href="https://github.com/tj/node-thunkify" target="_blank" rel="external">thunkify 库</a></li>
+<li><a href="https://github.com/tj/co" target="_blank" rel="external">co 库</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Javascript/" rel="tag"># Javascript</a>
+          
+            <a href="/tags/异步编程/" rel="tag"># 异步编程</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/27/javascript异步编程（2）Promise/" rel="next" title="javascript异步编程（2）Promise">
+                <i class="fa fa-chevron-left"></i> javascript异步编程（2）Promise
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/27/javascript异步编程（4）async-await/" rel="prev" title="Javascript异步编程（4）async/await">
+                Javascript异步编程（4）async/await <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="popzhou" />
+          <p class="site-author-name" itemprop="name">popzhou</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/popzhou" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              友情链接
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.ruanyifeng.com/" title="阮一峰" target="_blank">阮一峰</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基础概念"><span class="nav-number">1.</span> <span class="nav-text">基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-类型"><span class="nav-number">1.1.</span> <span class="nav-text">Symbol 类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Symbol-iterator"><span class="nav-number">1.2.</span> <span class="nav-text">Symbol.iterator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可迭代协议-iterable"><span class="nav-number">1.3.</span> <span class="nav-text">可迭代协议 iterable</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#可迭代对象示例"><span class="nav-number">1.3.1.</span> <span class="nav-text">可迭代对象示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用于可迭代对象的语法"><span class="nav-number">1.3.2.</span> <span class="nav-text">用于可迭代对象的语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代器协议-iterator"><span class="nav-number">1.4.</span> <span class="nav-text">迭代器协议 iterator</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#迭代器示例"><span class="nav-number">1.4.1.</span> <span class="nav-text">迭代器示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可迭代对象转换为迭代器对象"><span class="nav-number">1.5.</span> <span class="nav-text">可迭代对象转换为迭代器对象</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#function-生成器函数"><span class="nav-number">2.</span> <span class="nav-text">function*  生成器函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#next-传参"><span class="nav-number">2.1.</span> <span class="nav-text">next()传参</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Generator-生成器"><span class="nav-number">3.</span> <span class="nav-text">Generator  生成器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#方法"><span class="nav-number">3.1.</span> <span class="nav-text">方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Thunk-函数"><span class="nav-number">4.</span> <span class="nav-text">Thunk 函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#thunkify-库"><span class="nav-number">4.1.</span> <span class="nav-text">thunkify 库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thunk-函数的自动流程管理"><span class="nav-number">4.2.</span> <span class="nav-text">Thunk 函数的自动流程管理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#co-库"><span class="nav-number">5.</span> <span class="nav-text">co 库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">6.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">popzhou</span>
+  &nbsp;&nbsp;&nbsp;
+  <span><a href="https://tongji.baidu.com" target="_blank">百度统计</a></span>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://https-popzhou-github-io.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2017/06/27/javascript异步编程（3）Generator/';
+          this.page.identifier = '2017/06/27/javascript异步编程（3）Generator/';
+          this.page.title = 'javascript异步编程（3）Generator';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://https-popzhou-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
